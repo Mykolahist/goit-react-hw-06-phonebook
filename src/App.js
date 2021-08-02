@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+import Container from './components/Container';
+import Header from './components/Header';
+import Form from './components/Form';
+import Filter from './components/Filter';
+import ContactList from './components/ContactList';
+
+import './common.css';
+import fadeStyles from './fade/fadeFilter.module.css';
+import fadeHeaderStyles from './fade/fadeHeader.module.css';
+
+class App extends Component {
+  render() {
+    const { contacts } = this.props;
+    const renderFilter = contacts.length > 0;
+
+    return (
+      <Container>
+        <CSSTransition
+          in={true}
+          appear
+          timeout={500}
+          classNames={fadeHeaderStyles}
+          unmountOnExit
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <Header />
+        </CSSTransition>
+
+        <Form />
+
+        <CSSTransition
+          in={renderFilter}
+          timeout={250}
+          classNames={fadeStyles}
+          unmountOnExit
+        >
+          <Filter />
+        </CSSTransition>
+
+        <CSSTransition
+          in={true}
+          appear
+          timeout={500}
+          classNames={fadeStyles}
+          unmountOnExit
+        >
+          <ContactList />
+        </CSSTransition>
+      </Container>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  contacts: state.phonebook.contacts,
+});
+
+export default connect(mapStateToProps, null)(App);
